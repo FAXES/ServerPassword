@@ -1,13 +1,15 @@
+-- PASSWORD STUFF
 ------------------------------------
 -- Server Password, Made by FAXES --
+--   Modified by GlitchDetector   --
 ------------------------------------
 
 --- CONFIG ---
 
 
 ---------------------------------------------------------------------------
-local ped = GetPlayerPed(-1)
 local passwordPassed = false
+local attempts = 3
 
 function KeyboardInput(textEntry, inputText, maxLength) -- Thanks to Lucifer for the function.
     AddTextEntry('FMMC_KEY_TIP1', textEntry)
@@ -46,13 +48,27 @@ end
 -------------------------------------------------------------------------------------------------------------------------------
 AddEventHandler('onClientMapStart', function()
     Wait(1000)
+    local ped = GetPlayerPed(-1)
     FreezeEntityPosition(ped, true)
-    TriggerServerEvent("Fax:CheckPassword", KeyboardInput("Enter server Password", "", 30))
-
+    TriggerServerEvent("Fax:ServerPassword:Initialize")
+end)
+RegisterCommand('pw', function()
+    Wait(1000)
+    local ped = GetPlayerPed(-1)
+    FreezeEntityPosition(ped, true)
+    TriggerServerEvent("Fax:ServerPassword:Initialize")
 end)
 
-RegisterNetEvent('Fax:PassedPassword')
-AddEventHandler('Fax:PassedPassword', function(bool)
-        FreezeEntityPosition(ped, false)
-        TriggerEvent('chatMessage', "^2Passed Password!")
+RegisterNetEvent("Fax:ServerPassword:ShowPasswordPrompt")
+AddEventHandler("Fax:ServerPassword:ShowPasswordPrompt", function()
+    local password = KeyboardInput("Enter server password (" .. attempts .. " attempt" .. (attempts == 1 and "" or "s") .. " remaining)", "", 30)
+    attempts = attempts - 1
+    TriggerServerEvent("Fax:ServerPassword:CheckPassword", password, attempts)
+end)
+
+RegisterNetEvent('Fax:ServerPassword:PassedPassword')
+AddEventHandler('Fax:ServerPassword:PassedPassword', function(bool)
+    local ped = GetPlayerPed(-1)
+    FreezeEntityPosition(ped, false)
+    TriggerEvent('chatMessage', "^2Passed Password!")
 end)
