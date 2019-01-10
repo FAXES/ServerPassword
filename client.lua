@@ -55,7 +55,7 @@ RegisterNetEvent("Fax:ServerPassword:ShowPasswordPrompt")
 AddEventHandler("Fax:ServerPassword:ShowPasswordPrompt", function()
     local password = KeyboardInput("Enter server password (" .. attempts .. " attempt" .. (attempts == 1 and "" or "s") .. " remaining)", "", 30)
     attempts = attempts - 1
-    TriggerServerEvent("Fax:ServerPassword:CheckPassword", password, attempts)
+    TriggerServerEvent("Fax:ServerPassword:CheckPassword", tostring(password), attempts) -- convert the password to a string in case it's nil -> 'nil'.
 end)
 
 RegisterNetEvent('Fax:ServerPassword:PassedPassword')
