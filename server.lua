@@ -78,7 +78,7 @@ AddEventHandler('Fax:ServerPassword:CheckPassword', function(Newpassword, attemp
     if clPassword == password then
         TriggerClientEvent("Fax:ServerPassword:PassedPassword", s)
     elseif password ~= clPassword then
-        if attempts <= 0 then
+        if attempts == nil or attempts <= 0 then -- check for nil just in case, to prevent a crash. Kick the player if it's somehow nil.
             Timeout(s)
             DropPlayer(s, kickMessage)
         else
